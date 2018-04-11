@@ -1,3 +1,3 @@
 <?php
-echo $testController;
+echo "xin chào ".$testController;
 ?>

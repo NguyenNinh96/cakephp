@@ -34,7 +34,7 @@ class UsersTable extends Table
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
     }
-
+  
     /**
      * Default validation rules.
      *
@@ -48,10 +48,10 @@ class UsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->scalar('Name')
-            ->maxLength('Name', 50)
-            ->requirePresence('Name', 'create')
-            ->notEmpty('Name');
+            ->scalar('name')
+            ->maxLength('name', 50)
+            ->requirePresence('name', 'create')
+            ->notEmpty('name');
 
         $validator
             ->email('email')
