@@ -52,8 +52,7 @@ class UsersController extends AppController
     {
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
-            //dd($this->request->data['password']);
-            $this->request->data['password'] = Security::hash($this->request->data['password'],'md5');
+            //$this->request->data['password'] = Security::hash($this->request->data['password'],'md5');
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));

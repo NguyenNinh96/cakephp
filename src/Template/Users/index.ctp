@@ -2,7 +2,7 @@
 <div class="add">
     <ul class="side-nav">
         <li><?= $this->Html->link(__('New User'), ['action' => 'add']) ?></li>
-    </ul>
+    </ul>    
 </div>
 <div class="table">
 <table>
