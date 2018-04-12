@@ -18,7 +18,7 @@ class UsersController extends AppController
     function beforeFilter(Event $event) {
         parent::beforeFilter($event);
         $this->Auth->allow(['register']);
-        $this->loadHelper('Session');
+      //  $this->loadHelper('Html'); 
     }
 
     /**
@@ -140,7 +140,7 @@ class UsersController extends AppController
                 $this->Flash->success(__('Mời mở mail để xác nhận.'));
                 $email = new Email('default');
                 $email
-                    ->viewVars(['value' => $this->request->data['name'], $key])
+                    ->viewVars(['value' => $this->request->data['name'],'key'=> $key])
                     ->template('welcome')
                     ->emailFormat('html')
                     ->from(['ninh.jvb@gmail.com' => 'My Site'])
