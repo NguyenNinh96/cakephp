@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Auth;
 use Cake\Utility\Security;
 use Cake\Event\Event;
+use Cake\Mailer\Email;
 /**
  * Users Controller
  *
@@ -14,6 +15,11 @@ use Cake\Event\Event;
  */
 class UsersController extends AppController
 {
+    function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['register']);
+        $this->loadHelper('Session');
+    }
 
     /**
      * Index method
@@ -122,4 +128,47 @@ class UsersController extends AppController
     function logout(){
         $this->redirect($this->Auth->logout());
     }
+    public function register()
+    {
+        $user = $this->Users->newEntity();
+        if ($this->request->is('post')) {
+            $this->request->session()->write('user', $this->request->getData());
+            $key = $this->generateRandomString();
+            $this->request->session()->write('key', $key);
+           // $user = $this->Users->patchEntity($user, $this->request->getData());
+            //if ($this->Users->save($user)) {
+                $this->Flash->success(__('Mời mở mail để xác nhận.'));
+                $email = new Email('default');
+                $email
+                    ->viewVars(['value' => $this->request->data['name'], $key])
+                    ->template('welcome')
+                    ->emailFormat('html')
+                    ->from(['ninh.jvb@gmail.com' => 'My Site'])
+                    ->to($this->request->data['email'])
+                    ->subject('Xác nhận đăng ký')
+                    ->send();
+                return $this->redirect(['action' => 'login']);
+           // }
+           // $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        }
+        $this->set(compact('user'));
+    }
+    function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+    public function active_user($key) {
+       if($key == $this->request->session()->read('key')){
+            $user = $this->Users->patchEntity($user, $this->request->session()->read('user') );
+            if ($this->Users->save($user)) {
+                return $this->redirect(['action' => 'index']);
+            }
+       } 
+    }
+
 }
