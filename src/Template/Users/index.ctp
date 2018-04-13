@@ -32,7 +32,7 @@
             <th class="actions"><?= __('Actions') ?></th>
         </tr>
         <?php foreach ($users as $user): ?>
-        <tr>
+        <tr id = "<?php echo $user->id ?>">
             <td><?= $user->id ?></td>
             <td>
                 <?= $user->name ?>
@@ -46,7 +46,8 @@
            <td class="actions">
                 <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
                 <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?>
-                <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?>
+               <!-- <?//= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?> -->
+                <a href = "#" id= "<?php echo $user->id ?>" class="delete">Delete</a>
             </td>
         </tr>
         <?php endforeach; ?>
@@ -67,8 +68,8 @@
             var keyword = $('#search').val();
 
             $.ajax({
-                url: 'users/search', //url gui du lieu den
-                type: 'POST', // post or get
+                url: 'users/search', 
+                type: 'POST', 
                 data: {
                     keyword: keyword
                 },
@@ -78,6 +79,19 @@
                 }
             });
         });
-        
+        $(document).on('click', '.delete', function() {
+            var id = $(this).attr("id");
+            $.ajax({
+                url: 'users/deleteAjax', 
+                type: 'POST', 
+                data: {
+                    id: id
+                },
+                success: function() {
+                    alert('Xoa thanh cong');
+                   $('#'+id).remove();
+                }
+            });
+        });
     });
 </script>

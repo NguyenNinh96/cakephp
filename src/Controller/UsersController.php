@@ -134,8 +134,20 @@ class UsersController extends AppController
         } else {
             $this->Flash->error(__('The user could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
+    }
+     public function deleteAjax()
+    {
+        //$this->viewBuilder()->setLayout('');
+        $this->autoRender = false;
+        $id= $this->request->data['id'];
+        $user = $this->Users->get($id);
+        $this->Users->delete($user);
+        // if ($this->Users->delete($user)) {
+        //     $this->Flash->success(__('The user has been deleted.'));
+        // } else {
+        //     $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+        // }
     }
     function login(){
         if($this->Auth->user()){
