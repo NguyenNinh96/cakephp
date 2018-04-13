@@ -20,17 +20,42 @@ class UsersController extends AppController
         $this->Auth->allow(['register','activeUser']);
       //  $this->loadHelper('Html'); 
     }
+    public $paginate = [
+        'limit' => 5,
+        'order' => [
+            'Articles.title' => 'asc'
+        ]
+    ];
 
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('Paginator');
+    }
     /**
      * Index method
      *
      * @return \Cake\Http\Response|void
      */
-    public function index()
+    public function index($search = null)
     {
         $users = $this->Users->find('all');
-
+        // if($this->request->data != null){
+        //     $search = $this->request->data['Search'];
+        //     $users = $users->where(['OR' => ['name LIKE' => '%'.$search.'%', 'username LIKE' => '%'.$search.'%']]);
+        // }
+        $this->paginate($users);
         $this->set(compact('users'));
+    }
+
+    public function search() {
+        $this->viewBuilder()->setLayout('');
+        if ($this->request->is('post')) {
+            $search = $this->request->data['keyword'];
+            $users = $this->Users->find('all')->hydrate(false)->where(['OR' => ['name LIKE' => '%' . trim($search) . '%', 'username LIKE' => '%' . trim($search) . '%']]);
+             $this->paginate($users)->toArray();
+            $this->set('users', $users);
+        }
     }
 
     /**
@@ -153,7 +178,6 @@ class UsersController extends AppController
            // }
            // $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
-        $this->set(compact('user'));
     }
     public function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
