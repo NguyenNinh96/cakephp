@@ -1,7 +1,7 @@
 <h1>Users</h1>
 <div class="add">
     <ul class="side-nav">
-        <li><?= $value ?></li>
+       <li><?= $this->Html->link(__('Add user'), ['action' => 'add']) ?></li>
         <li><?= $this->Html->link(__('Logout'), ['action' => 'logout']) ?></li>
     </ul>    
 </div>
