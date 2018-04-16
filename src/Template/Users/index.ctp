@@ -46,8 +46,8 @@
            <td class="actions">
                 <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
                 <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?>
-               <!-- <?//= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?> -->
-                <a href = "#" id= "<?php echo $user->id ?>" class="delete">Delete</a>
+                <!-- <?//= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?> -->
+                 <a href = "#" id= "<?php echo $user->id ?>" class="delete">Delete</a>
             </td>
         </tr>
         <?php endforeach; ?>
@@ -80,18 +80,18 @@
             });
         });
         $(document).on('click', '.delete', function() {
-            var id = $(this).attr("id");
-            $.ajax({
-                url: 'users/deleteAjax', 
-                type: 'POST', 
-                data: {
-                    id: id
-                },
-                success: function() {
-                    alert('Xoa thanh cong');
-                   $('#'+id).remove();
-                }
-            });
-        });
+            var id = $(this).attr('id');
+             $.ajax({
+                 url: 'users/deleteAjax', 
+                 type: 'POST', 
+                 data: {
+                     id: id
+                 },
+                 success: function() {
+                     alert('Xoa thanh cong');
+                    $('#'+id).remove();
+                 }
+             });
+         });
     });
 </script>
