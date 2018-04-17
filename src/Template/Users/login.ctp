@@ -20,7 +20,7 @@
                 },
                 password:{
                     required: true,
-                    minlength: 6 
+                    minlength: 6,
                 } 
             },
             messages: {
@@ -29,7 +29,7 @@
                     minlength :"Username phải lớn hơn 3 ký tự"
                 },
                 password :{
-                    required: "Username không được để trống",
+                    required: "Password không được để trống",
                     minlength :"Password phải lớn hơn 6 ký tự"
                 }  
             }

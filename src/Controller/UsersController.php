@@ -150,6 +150,7 @@ class UsersController extends AppController
         }
     }
     function login(){
+        $this->viewBuilder()->setLayout('mylayout');
         if($this->Auth->user()){
             return $this->redirect('/users');
         }
@@ -168,8 +169,18 @@ class UsersController extends AppController
     }
     public function register()
     {
+        $this->viewBuilder()->setLayout('mylayout');
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
+            $email = $this->request->data['email'];
+            if (isset($email)) {
+                $check = $this->checkEmail($email);
+                if($check) {
+
+                } else {
+                    die(json_encode(['code' => 1]));
+                }
+            }
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if (!empty($user->errors())) {
                 $this->Flash->error(__('Đăng ký không thành công mời đăng ký lại'));
@@ -215,6 +226,15 @@ class UsersController extends AppController
                 return $this->redirect(['action' => 'register']); 
             }
         }
-        
+    }
+    public function checkEmail($email)
+    {
+      //  $email = $this->request->data['email'];
+        $data = $this->Users->find('all')->hydrate(false)->where(['email LIKE' => '%' .$email. '%']);
+        if (empty($data)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
