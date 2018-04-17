@@ -62,18 +62,15 @@ class UsersTable extends Table
         $validator
             ->scalar('username')
             ->maxLength('username', 50)
+             ->minLength('username', 3)
             ->requirePresence('username', 'create')
             ->notEmpty('username');
 
         $validator
             ->scalar('password')
             ->maxLength('password', 255)
+            ->minLength('password', 6)
             ->requirePresence('password', 'create')
-            ->notEmpty('password');
-        $validator
-            ->scalar('password')
-            ->maxLength('password', 255)
-            ->requirePresence('password', 'login')
             ->notEmpty('password');
         return $validator;
     }
@@ -89,7 +86,7 @@ class UsersTable extends Table
     {
         $rules->add($rules->isUnique(['email']));
         $rules->add($rules->isUnique(['username']));
-        
+       // $rules->register($rules->isUnique(['email']));
         return $rules;
     }
 }

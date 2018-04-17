@@ -17,7 +17,7 @@ class UsersController extends AppController
 {
     function beforeFilter(Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['register','add','activeUser']);
+        $this->Auth->allow(['register','activeUser']);
       //  $this->loadHelper('Html'); 
     }
     public $paginate = [
@@ -83,40 +83,13 @@ class UsersController extends AppController
     public function add()
     {
         $user = $this->Users->newEntity();
-       // dd($this->request->data);
-       if ($this->request->is('post')) {
-            //$this->request->data['password'] = Security::hash($this->request->data['password'],'md5');
-            if ($this->request->data['check'] == 1){
-                $user = $this->Users->patchEntity($user, $this->request->getData());
-                $error = $user->errors();
-                if (!empty($error)) {
-                   die('Co loi xay ra. Vui long thu lai');
-                }
-                $key = $this->generateRandomString();
-                $this->request->session()->write('user', ['user'=>$this->request->getData(),'key'=>$key]);
-              
-               // $this->request->session()->write('user', $key);
-               // $user = $this->Users->patchEntity($user, $this->request->getData());
-                //if ($this->Users->save($user)) {
-                $this->Flash->success(__('Mời mở mail để xác nhận.'));
-                $email = new Email('default');
-                $email
-                ->viewVars(['value' => $this->request->data['name'],'email' => $this->request->data['email'],'key'=> $key])
-                ->template('welcome')
-                ->emailFormat('html')
-                ->from(['ninh.jvb@gmail.com' => 'My Site'])
-                ->to($this->request->data['email'])
-                ->subject('Xác nhận đăng ký')
-                ->send();
-                return $this->redirect(['action' => 'login']);
-            }else{
-                $user = $this->Users->patchEntity($user, $this->request->getData());
-                if ($this->Users->save($user)) {
-                    $this->Flash->success(__('The user has been saved.'));
-                    return $this->redirect(['action' => 'index']);
-                }
-                $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        if ($this->request->is('post')) {
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('The user has been saved.'));
+                return $this->redirect(['action' => 'index']);
             }
+            $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
     }
@@ -170,11 +143,11 @@ class UsersController extends AppController
         $id= $this->request->data['id'];
         $user = $this->Users->get($id);
         $this->Users->delete($user);
-        // if ($this->Users->delete($user)) {
-        //     $this->Flash->success(__('The user has been deleted.'));
-        // } else {
-        //     $this->Flash->error(__('The user could not be deleted. Please, try again.'));
-        // }
+        if ($this->Users->delete($user)) {
+            $this->Flash->success(__('The user has been deleted.'));
+        } else {
+            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+        }
     }
     function login(){
         if($this->Auth->user()){
@@ -195,33 +168,28 @@ class UsersController extends AppController
     }
     public function register()
     {
-       //  $user = $this->Users->newEntity();
-       // // pr($user); die;
-        
-       //  if ($this->request->is('post')) {
-       //      if (!empty($user->error)) {
-       //          die('...');
-       //      }
-       //      $key = $this->generateRandomString();
-       //      $this->request->session()->write('user', ['user'=>$this->request->getData(),'key'=>$key]);
-          
-       //     // $this->request->session()->write('user', $key);
-       //     // $user = $this->Users->patchEntity($user, $this->request->getData());
-       //      //if ($this->Users->save($user)) {
-       //      $this->Flash->success(__('Mời mở mail để xác nhận.'));
-       //      $email = new Email('default');
-       //      $email
-       //      ->viewVars(['value' => $this->request->data['name'],'email' => $this->request->data['email'],'key'=> $key])
-       //      ->template('welcome')
-       //      ->emailFormat('html')
-       //      ->from(['ninh.jvb@gmail.com' => 'My Site'])
-       //      ->to($this->request->data['email'])
-       //      ->subject('Xác nhận đăng ký')
-       //      ->send();
-       //      return $this->redirect(['action' => 'login']);
-       //     // }
-       //     // $this->Flash->error(__('The user could not be saved. Please, try again.'));
-       //  }
+        $user = $this->Users->newEntity();
+        if ($this->request->is('post')) {
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if (!empty($user->errors())) {
+                $this->Flash->error(__('Đăng ký không thành công mời đăng ký lại'));
+                return $this->redirect(['action' => 'register']);
+            }
+            $key = $this->generateRandomString();
+            $this->request->session()->write('users', ['user'=>$user,'key'=>$key]);
+            $this->Flash->success(__('Mời vào mail để xác nhận.'));
+            $email = new Email('default');
+            $email
+            ->viewVars(['value' => $this->request->data['name'],'email' => $this->request->data['email'],'key'=> $key])
+            ->template('welcome')
+            ->emailFormat('html')
+            ->from(['ninh.jvb@gmail.com' => 'My Site'])
+            ->to($this->request->data['email'])
+            ->subject('Xác nhận đăng ký')
+            ->send();
+            return $this->redirect(['action' => 'login']);
+        }
+         $this->set(compact('user'));
     }
     public function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -234,14 +202,12 @@ class UsersController extends AppController
     }
     public function activeUser($key) {
 
-        $session=$this->request->session()->read('user');
+        $session=$this->request->session()->read('users');
         if(!$session['key']){
               return $this->redirect(['action' => 'login']);
         }
         if($key == $session['key']){
-            $user = $this->Users->newEntity();
-            $user = $this->Users->patchEntity($user,$session['user']);
-            if ($this->Users->save($user)) {
+            if ($this->Users->save($session['user'])) {
                 $this->request->session()->delete('user');
                 return $this->redirect(['action' => 'index']);
             }else{
