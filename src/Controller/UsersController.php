@@ -6,6 +6,7 @@ use Auth;
 use Cake\Utility\Security;
 use Cake\Event\Event;
 use Cake\Mailer\Email;
+use Cake\Auth\FormAuthenticate;
 /**
  * Users Controller
  *
@@ -15,11 +16,6 @@ use Cake\Mailer\Email;
  */
 class UsersController extends AppController
 {
-    function beforeFilter(Event $event) {
-        parent::beforeFilter($event);
-        $this->Auth->allow(['register','activeUser','checkUser']);
-      //  $this->loadHelper('Html'); 
-    }
     public $paginate = [
         'limit' => 5,
         'order' => [

@@ -1,8 +1,9 @@
 <h1>Users</h1>
+
 <div class="add">
     <ul class="side-nav">
        <li><?= $this->Html->link(__('Add user'), ['action' => 'add']) ?></li>
-        <li><?= $this->Html->link(__('Logout'), ['action' => 'logout']) ?></li>
+        
     </ul>    
 </div>
 <div class="search">
@@ -46,6 +47,7 @@
            <td class="actions">
                 <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
                 <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?>
+                
                 <!-- <?//= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?> -->
                  <a href = "#" id= "<?php echo $user->id ?>" class="delete">Delete</a>
             </td>

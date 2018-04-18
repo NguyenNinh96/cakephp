@@ -36,17 +36,25 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 </head>
 <body>
     <nav class="top-bar expanded" data-topbar role="navigation">
-        <ul class="title-area large-3 medium-4 columns">
+        <ul class="title-area large-2 medium-4 columns">
             <li class="name">
-                <h1><a href=""><?= $this->fetch('title') ?></a></h1>
+              <!--   <h1><a href=""><?//= $this->fetch('title') ?></a></h1> -->
+                <h1><a href=""><?php echo isset($account['username']) ? $account['username'] : ''; ?></a></h1>
             </li>
         </ul>
         <div class="top-bar-section">
             <ul class="right">
-                <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
-                <li><a target="_blank" href="https://api.cakephp.org/3.0/">API</a></li>
+                <li><?= $this->Html->link(__('Logout'), ['action' => 'logout']) ?></li>
+               <!--  <li><a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a></li>
+                <li><a target="_blank" href="https://api.cakephp.org/3.0/">PIA</a></li> -->
             </ul>
         </div>
+    </nav>
+    <nav class="large-2 medium-4 columns" id="actions-sidebar">
+        <ul class="side-nav">
+            <li><h3><?= $this->Html->link(__('Users'), ['controller'=>'users','action' => 'index']) ?></h3></li>
+            <li><h3><?= $this->Html->link(__('Products'), ['controller'=>'products','action' => 'index']) ?></h3></li>
+        </ul>
     </nav>
     <?= $this->Flash->render() ?>
     <div class="container clearfix">

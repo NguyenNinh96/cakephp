@@ -16,7 +16,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
-
+use Cake\Auth\FormAuthenticate;
 /**
  * Application Controller
  *
@@ -38,7 +38,13 @@ class AppController extends Controller
      *
      * @return void
      */
-
+    function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['register','activeUser','checkUser']);
+        $user = $this->Auth->user();
+        $this->set('account', $user);
+       // $this->set(['userData'=> $this->Auth->user()]);
+    }
     public function initialize()
     {
         parent::initialize();
@@ -76,4 +82,5 @@ class AppController extends Controller
         //$this->loadComponent('Security');
         //$this->loadComponent('Csrf');
     }
+
 }
