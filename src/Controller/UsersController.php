@@ -23,11 +23,13 @@ class UsersController extends AppController
         ]
     ];
     public $components = array('RequestHandler');
-    //var $helpers = array('Js','Paginator','Html');
+    
     public function initialize()
     {
         parent::initialize();
+        $this->loadComponent('RequestHandler');
         $this->loadComponent('Paginator');
+        $this->loadComponent('Test');
     }
     /**
      * Index method
@@ -42,6 +44,8 @@ class UsersController extends AppController
         //     $users = $users->where(['OR' => ['name LIKE' => '%'.$search.'%', 'username LIKE' => '%'.$search.'%']]);
         // }
         $this->paginate($users);
+        //$s = $this->Test->sum(1,2);
+        //pr($s);die;
         $this->set(compact('users'));
     }
 
@@ -50,7 +54,7 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             $search = $this->request->data['keyword'];
             $users = $this->Users->find('all')->hydrate(false)->where(['OR' => ['name LIKE' => '%' . trim($search) . '%', 'username LIKE' => '%' . trim($search) . '%']]);
-             $this->paginate($users)->toArray();
+            $this->paginate($users)->toArray();
             $this->set('users', $users);
         }
     }
