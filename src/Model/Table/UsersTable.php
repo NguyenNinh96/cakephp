@@ -60,7 +60,7 @@ class UsersTable extends Table
         $validator
             ->scalar('username')
             ->maxLength('username', 50)
-             ->minLength('username', 3)
+            ->minLength('username', 3)
             ->requirePresence('username', 'create')
             ->notEmpty('username');
 

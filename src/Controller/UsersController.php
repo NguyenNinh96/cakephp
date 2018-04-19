@@ -17,7 +17,7 @@ use Cake\Auth\FormAuthenticate;
 class UsersController extends AppController
 {
     public $paginate = [
-        'limit' => 5,
+        'limit' => 3,
         'order' => [
             'Articles.title' => 'asc'
         ]
@@ -29,7 +29,7 @@ class UsersController extends AppController
         parent::initialize();
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Paginator');
-        $this->loadComponent('Test');
+        $this->loadComponent('Email');
     }
     /**
      * Index method
@@ -50,6 +50,7 @@ class UsersController extends AppController
     }
 
     public function search() {
+
         $this->viewBuilder()->setLayout('');
         if ($this->request->is('post')) {
             $search = $this->request->data['keyword'];
@@ -86,10 +87,10 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('Tài khoản đã được tạo.'));
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Tạo tài khoản không thành công.'));
         }
         $this->set(compact('user'));
     }
@@ -109,11 +110,11 @@ class UsersController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('Chỉnh sửa thành công.'));
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Chỉnh sửa chưa thành công.'));
         }
         $this->set(compact('user'));
     }
@@ -127,12 +128,13 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
+
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+            $this->Flash->success(__('Xóa thành công'));
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Xóa không thành công.'));
         }
         return $this->redirect(['action' => 'index']);
     }
@@ -144,12 +146,13 @@ class UsersController extends AppController
         $user = $this->Users->get($id);
         $this->Users->delete($user);
         if ($this->Users->delete($user)) {
-            $this->Flash->success(__('The user has been deleted.'));
+            $this->Flash->success(__('User đã xóa thành công'));
         } else {
-            $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Xóa không thành công.'));
         }
     }
     function login(){
+
         $this->viewBuilder()->setLayout('mylayout');
         if($this->Auth->user()){
             return $this->redirect('/users');
@@ -160,8 +163,21 @@ class UsersController extends AppController
                  $this->Auth->setUser($user);
                 return $this->redirect($this->Auth->redirectUrl());
             } else {
-            $this->Flash->error(__('Username or password is incorrect'));
+            $this->Flash->error(__('Tên hoặc mật khẩu chưa đúng!'));
             }
+        }
+    }
+    public function loginAPI(){
+        $this->autoRender = false;
+        if ($this->request->is('post')) {
+            $this->request->data = $this->request->query;
+            $user = $this->Auth->identify();
+            if (!empty($user)) {
+                $rs = ['code' => 1, 'message' => 'Đăng nhập thành công!'];
+            } else {
+                $rs = ['code' => 0, 'message' => 'Đăng nhập thất bại!'];
+            }
+            $this->response->body(json_encode($rs));
         }
     }
     public function logout(){
@@ -180,29 +196,13 @@ class UsersController extends AppController
             }
             $key = $this->generateRandomString();
             $this->request->session()->write('users', ['user'=>$user,'key'=>$key]);
+            $this->Email->sendEmail($this->request->data['email'],$this->request->data['name'],$key);
             $this->Flash->success(__('Mời vào mail để xác nhận.'));
-            $email = new Email('default');
-            $email
-            ->viewVars(['value' => $this->request->data['name'],'email' => $this->request->data['email'],'key'=> $key])
-            ->template('welcome')
-            ->emailFormat('html')
-            ->from(['ninh.jvb@gmail.com' => 'My Site'])
-            ->to($this->request->data['email'])
-            ->subject('Xác nhận đăng ký')
-            ->send();
             return $this->redirect(['action' => 'login']);
         }
          $this->set(compact('user'));
     }
-    public function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
-    }
+    
     public function activeUser($key) {
         $this->autoRender = false;
         $session=$this->request->session()->read('users');

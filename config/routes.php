@@ -52,6 +52,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $routes->connect('/test', ['controller' => 'Test', 'action' => 'view']);
+    $routes->connect('/loginAPI', ['controller' => 'Users', 'action' => 'loginAPI']);
     $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
     $routes->connect('/register', ['controller' => 'Users', 'action' => 'register']);
     $routes->connect('/active_user/:key', ['controller' => 'Users', 'action' => 'active_user'],['pass'=>['key']]);

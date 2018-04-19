@@ -40,7 +40,7 @@ class AppController extends Controller
      */
     function beforeFilter(Event $event) {
         parent::beforeFilter($event);
-        $this->Auth->allow(['register','activeUser','checkUser']);
+        $this->Auth->allow(['register','activeUser','checkUser', 'loginAPI']);
         $user = $this->Auth->user();
         $this->set('account', $user);
        // $this->set(['userData'=> $this->Auth->user()]);
@@ -82,5 +82,13 @@ class AppController extends Controller
         //$this->loadComponent('Security');
         //$this->loadComponent('Csrf');
     }
-
+    public function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
 }
